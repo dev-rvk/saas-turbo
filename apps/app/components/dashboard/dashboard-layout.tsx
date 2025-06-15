@@ -5,16 +5,9 @@ import { Sidebar } from "./sidebar"
 import { Navbar } from "./navbar"
 import { DashboardContent } from "./dashboard-content"
 import { ProfileContent } from "./profile-content"
+import type { UserType } from "@repo/types/user"
 
-interface UserType {
-  id: string
-  name: string
-  emailVerified: boolean
-  email: string
-  createdAt: Date
-  updatedAt: Date
-  image?: string | null
-}
+
 
 interface Session {
   user: UserType

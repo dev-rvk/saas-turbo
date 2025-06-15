@@ -15,17 +15,7 @@ import type { NavigationItem } from "./dashboard-layout"
 import { signOut } from "@repo/auth/client"
 import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { toast } from "sonner"
-
-interface UserType {
-  id: string
-  name: string
-  emailVerified: boolean
-  email: string
-  createdAt: Date
-  updatedAt: Date
-  image?: string | null
-}
+import type { UserType } from "@repo/types/user"
 
 interface NavbarProps {
   user: UserType

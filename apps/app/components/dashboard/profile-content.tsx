@@ -4,16 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/card"
 import { Badge } from "@repo/ui/components/badge"
 import { BarChart3, Settings, User } from "lucide-react"
-
-interface UserType {
-  id: string
-  name: string
-  emailVerified: boolean
-  email: string
-  createdAt: Date
-  updatedAt: Date
-  image?: string | null
-}
+import type { UserType } from "@repo/types/user"
 
 interface ProfileContentProps {
   user: UserType

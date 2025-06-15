@@ -1,14 +1,6 @@
 "use client"
 
-interface UserType {
-  id: string
-  name: string
-  emailVerified: boolean
-  email: string
-  createdAt: Date
-  updatedAt: Date
-  image?: string | null
-}
+import type { UserType } from "@repo/types/user"
 
 interface DashboardContentProps {
   user: UserType
