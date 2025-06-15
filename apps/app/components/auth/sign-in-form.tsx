@@ -9,7 +9,7 @@ import { Button } from "@repo/ui/components/button";
 import { Label } from "@repo/ui/components/label";
 import { Input } from "@repo/ui/components/input";
 import { toast } from "sonner";
-import { signInSchema, SignInFormData } from "@repo/types/auth";
+import { signInSchema } from "@repo/types/auth";
 
 export default function SigninForm() {
   const initialState = { errorMessage: "" };
