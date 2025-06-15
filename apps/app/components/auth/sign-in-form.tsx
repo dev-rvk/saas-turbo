@@ -2,7 +2,7 @@
 
 import { signIn } from "@/lib/actions";
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Icons } from "@repo/ui/components/icons";
 import SignInSocial from "./sign-in-social";
 import { Button } from "@repo/ui/components/button";
@@ -14,6 +14,7 @@ import { signInSchema, SignInFormData } from "@repo/types/auth";
 export default function SigninForm() {
   const initialState = { errorMessage: "" };
   const [state, formAction, pending] = useActionState(signIn, initialState);
+  const [errors, setErrors] = useState<{ email?: string; pwd?: string }>({});
 
   useEffect(() => {
     if (state.errorMessage.length) {
@@ -21,9 +22,38 @@ export default function SigninForm() {
     }
   }, [state.errorMessage]);
 
+  const handleSubmit = async (formData: FormData) => {
+    const data = {
+      email: formData.get("email") as string,
+      pwd: formData.get("pwd") as string,
+    };
+
+    try {
+      // Validate the data
+      signInSchema.parse(data);
+      setErrors({});
+      await formAction(formData);
+    } catch (error) {
+      if (error instanceof Error) {
+        const zodError = JSON.parse(error.message);
+        const newErrors: { email?: string; pwd?: string } = {};
+        
+        zodError.forEach((err: { path: string[]; message: string }) => {
+          if (err.path[0] === "email") {
+            newErrors.email = err.message;
+          } else if (err.path[0] === "pwd") {
+            newErrors.pwd = err.message;
+          }
+        });
+        
+        setErrors(newErrors);
+      }
+    }
+  };
+
   return (
     <form
-      action={formAction}
+      action={handleSubmit}
       className="bg-card m-auto h-fit w-full max-w-sm rounded-[calc(var(--radius)+.125rem)] border p-0.5 shadow-md dark:[--color-muted:var(--color-zinc-900)]"
     >
       <div className="p-8 pb-6">
@@ -55,7 +85,15 @@ export default function SigninForm() {
             <Label htmlFor="email" className="block text-sm">
               Email
             </Label>
-            <Input type="email" required name="email" id="email" />
+            <Input 
+              type="text"
+              name="email" 
+              id="email"
+              className={errors.email ? "border-red-500" : ""}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div className="space-y-0.5">
@@ -74,19 +112,15 @@ export default function SigninForm() {
             </div>
             <Input
               type="password"
-              required
               name="pwd"
               id="pwd"
-              className="input sz-md variant-mixed"
+              className={`input sz-md variant-mixed ${errors.pwd ? "border-red-500" : ""}`}
             />
+            {errors.pwd && (
+              <p className="text-sm text-red-500 mt-1">{errors.pwd}</p>
+            )}
           </div>
 
-          {
-            // errorMessage && !pending && toast.promise(errorMessage)
-            // <p aria-live="polite" className="text-sm text-red-500">
-            //   {errorMessage}
-            // </p>
-          }
           <Button className="w-full" disabled={pending}>
             Sign In
           </Button>

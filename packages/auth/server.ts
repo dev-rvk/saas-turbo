@@ -15,6 +15,7 @@ export const auth = betterAuth({
         minPasswordLength: 8,
         maxPasswordLength: 128,
         autoSignIn: true,
+        requireUppercase: true,
 
     },
     accountLinking: {

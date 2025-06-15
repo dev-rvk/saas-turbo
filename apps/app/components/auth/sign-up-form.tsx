@@ -9,10 +9,13 @@ import { Button } from "@repo/ui/components/button";
 import { Label } from "@repo/ui/components/label";
 import { Input } from "@repo/ui/components/input";
 import SignInSocial from "./sign-in-social";
+import { signUpSchema, SignUpFormData } from "@repo/types/auth";
+import { useState } from "react";
 
 export default function SignupForm() {
   const initialState = { errorMessage: "" };
   const [state, formAction, pending] = useActionState(signUp, initialState);
+  const [errors, setErrors] = useState<{ firstname?: string; lastname?: string; email?: string; pwd?: string }>({});
 
   useEffect(() => {
     if (state.errorMessage.length) {
@@ -20,9 +23,42 @@ export default function SignupForm() {
     }
   }, [state.errorMessage]);
 
+  const handleSubmit = async (formData: FormData) => {
+    const data = {
+      firstname: formData.get("firstname") as string,
+      lastname: formData.get("lastname") as string,
+      email: formData.get("email") as string,
+      pwd: formData.get("pwd") as string,
+    };
+    try {
+      signUpSchema.parse(data);
+      setErrors({});
+      await formAction(formData);
+    } catch (error) {
+      if (error instanceof Error) {
+        let zodError;
+        try {
+          zodError = JSON.parse(error.message);
+        } catch {
+          zodError = error;
+        }
+        const newErrors: { firstname?: string; lastname?: string; email?: string; pwd?: string } = {};
+        if (Array.isArray(zodError)) {
+          zodError.forEach((err: { path: string[]; message: string }) => {
+            if (err.path[0] === "firstname") newErrors.firstname = err.message;
+            if (err.path[0] === "lastname") newErrors.lastname = err.message;
+            if (err.path[0] === "email") newErrors.email = err.message;
+            if (err.path[0] === "pwd") newErrors.pwd = err.message;
+          });
+        }
+        setErrors(newErrors);
+      }
+    }
+  };
+
   return (
     <form
-      action={formAction}
+      action={handleSubmit}
       className="bg-card m-auto h-fit w-full max-w-sm rounded-[calc(var(--radius)+.125rem)] border p-0.5 shadow-md dark:[--color-muted:var(--color-zinc-900)]"
     >
       <div className="p-8 pb-6">
@@ -55,13 +91,19 @@ export default function SignupForm() {
               <Label htmlFor="firstname" className="block text-sm">
                 Firstname
               </Label>
-              <Input type="text" required name="firstname" id="firstname" />
+              <Input type="text" name="firstname" id="firstname" className={errors.firstname ? "border-red-500" : ""} />
+              {errors.firstname && (
+                <p className="text-sm text-red-500 mt-1">{errors.firstname}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastname" className="block text-sm">
                 Lastname
               </Label>
-              <Input type="text" required name="lastname" id="lastname" />
+              <Input type="text" name="lastname" id="lastname" className={errors.lastname ? "border-red-500" : ""} />
+              {errors.lastname && (
+                <p className="text-sm text-red-500 mt-1">{errors.lastname}</p>
+              )}
             </div>
           </div>
 
@@ -69,7 +111,10 @@ export default function SignupForm() {
             <Label htmlFor="email" className="block text-sm">
               Email
             </Label>
-            <Input type="email" required name="email" id="email" />
+            <Input type="text" name="email" id="email" className={errors.email ? "border-red-500" : ""} />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -78,11 +123,13 @@ export default function SignupForm() {
             </Label>
             <Input
               type="password"
-              required
               name="pwd"
               id="pwd"
-              className="input sz-md variant-mixed"
+              className={`input sz-md variant-mixed ${errors.pwd ? "border-red-500" : ""}`}
             />
+            {errors.pwd && (
+              <p className="text-sm text-red-500 mt-1">{errors.pwd}</p>
+            )}
           </div>
           <Button className="w-full" disabled={pending}>
             Continue
