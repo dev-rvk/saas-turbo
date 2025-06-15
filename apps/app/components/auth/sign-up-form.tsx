@@ -83,7 +83,11 @@ export default function SignupForm() {
           </SignInSocial>
         </div>
 
-        <hr className="my-4 border-dashed" />
+        <div className="my-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+            <hr className="border-dashed" />
+            <span className="text-muted-foreground text-xs">Or continue With</span>
+            <hr className="border-dashed" />
+        </div>
 
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-3">

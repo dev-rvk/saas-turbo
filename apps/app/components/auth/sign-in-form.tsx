@@ -78,7 +78,11 @@ export default function SigninForm() {
           </SignInSocial>
         </div>
 
-        <hr className="my-4 border-dashed" />
+        <div className="my-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+            <hr className="border-dashed" />
+            <span className="text-muted-foreground text-xs">Or continue With</span>
+            <hr className="border-dashed" />
+        </div>
 
         <div className="space-y-6">
           <div className="space-y-2">
@@ -103,10 +107,10 @@ export default function SigninForm() {
               </Label>
               <Button asChild variant="link" size="sm">
                 <Link
-                  href="/signin/forgot-account"
+                  href="/signin/forgot-password"
                   className="link intent-info variant-ghost text-sm"
                 >
-                  Forgot your Account ?
+                  Forgot your Password ?
                 </Link>
               </Button>
             </div>
