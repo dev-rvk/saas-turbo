@@ -2,6 +2,8 @@ import { betterAuth } from 'better-auth';
 import { nextCookies } from "better-auth/next-js";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@repo/db"
+import { sendResetPasswordEmail } from '@repo/email';
+import type { UserType } from '@repo/types/user';
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
@@ -16,6 +18,16 @@ export const auth = betterAuth({
         maxPasswordLength: 128,
         autoSignIn: true,
         requireUppercase: true,
+        sendResetPassword: async ({user, url}: {user: UserType, url: string}) => {
+            if (!user) {
+                return;
+            }
+            await sendResetPasswordEmail({
+                toEmail: user.email,
+                userFirstname: user.name,
+                resetPasswordLink: url,
+            });
+        },
 
     },
     accountLinking: {

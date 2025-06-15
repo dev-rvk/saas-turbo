@@ -38,5 +38,12 @@ export const signInSchema = z.object({
     .max(100, "Password must be less than 100 characters"),
 });
 
+export const ResetPasswordEmailSchema = z.object({
+  toEmail: z.string().email("Invalid email address"),
+  userFirstname: z.string().min(2, "User first name is required"),
+  resetPasswordLink: z.string().min(2, "Reset password link is required").url("Reset password link must be a valid URL"),
+});
+
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 export type SignInFormData = z.infer<typeof signInSchema>;
+export type ResetPasswordEmailData = z.infer<typeof ResetPasswordEmailSchema>;
