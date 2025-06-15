@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/typescript-config/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@repo/auth/*": ["./*"]
+    }
+  },
+  "include": [".", "../../apps/app/lib/actions.ts"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "@repo/auth",
+    "version": "0.0.0",
+    "scripts": {
+        "auth:db:generate": "npx @better-auth/cli generate --output ./db/prisma/schema.prisma --config ./server.ts"
+    },
+    "dependencies": {
+        "better-auth": "^1.2.9",
+        "next": "^15.2.3",
+        "react": "^19.0.0"
+    },
+    "devDependencies": {
+        "@radix-ui/react-label": "^2.1.7",
+        "@repo/db": "workspace:*",
+        "@repo/eslint-config": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
+        "@repo/ui": "workspace:*",
+        "@types/next": "^9.0.0",
+        "@types/node": "22.15.21",
+        "@types/react": "19.1.5",
+        "@types/react-dom": "^19.1.5",
+        "sonner": "^2.0.5",
+        "typescript": "^5.8.3"
+    },
+    "exports": {
+        "./client": "./client.ts",
+        "./server": "./server.ts"
+    }
+}
