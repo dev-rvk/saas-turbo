@@ -11,9 +11,14 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "eslint": "^9.20.1",
+    "eslint-plugin-next": "^0.0.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "prettier": "^3.5.1",
     "turbo": "^2.4.2",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "typescript-eslint": "^8.24.1"
   },
   "packageManager": "pnpm@10.12.1",
   "engines": {

@@ -9,6 +9,7 @@
         "db:reset": "prisma migrate reset"
     },
     "devDependencies": {
+        "@types/node": "^24.0.1",
         "prisma": "^6.9.0"
     },
     "dependencies": {

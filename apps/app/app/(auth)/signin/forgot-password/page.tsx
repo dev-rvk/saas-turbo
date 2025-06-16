@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
     if (error) {
       setMessage("Something went wrong. Please try again.")
     } else {
-      setMessage("Check your email for the reset link.")
+      setMessage("If you are registered with us, you will receive an email with a reset link.")
     }
     setEmail("")
     setIsLoading(false)
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
 
           {message && (
             <div className="mt-6 text-center">
-              <p className={`text-sm ${message.includes("Check your email") ? "text-green-600" : "text-red-600"}`}>
+              <p className={`text-sm ${message.includes("you will receive an email") ? "text-green-600" : "text-red-600"}`}>
                 {message}
               </p>
             </div>

@@ -1,64 +1,89 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { signUp } from "@/lib/actions";
+import { signUp } from "@repo/auth/actions";
 import { Icons } from "@repo/ui/components/icons";
 import { Button } from "@repo/ui/components/button";
 import { Label } from "@repo/ui/components/label";
 import { Input } from "@repo/ui/components/input";
 import SignInSocial from "./sign-in-social";
-import { signUpSchema, SignUpFormData } from "@repo/types/auth";
-import { useState } from "react";
+import OtpForm from "./otp-form";
+import type { ZodIssue } from "zod";
+import { Eye, EyeOff } from "lucide-react";
+
+type State = {
+  errorMessage?: string | null;
+  success?: boolean;
+  email?: string;
+  errors?: ZodIssue[];
+};
 
 export default function SignupForm() {
-  const initialState = { errorMessage: "" };
+  const router = useRouter();
+  const initialState: State = {};
   const [state, formAction, pending] = useActionState(signUp, initialState);
+  
+  const [showOtp, setShowOtp] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    pwd: ""
+  });
   const [errors, setErrors] = useState<{ firstname?: string; lastname?: string; email?: string; pwd?: string }>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    if (state.errorMessage.length) {
+    if (state?.errorMessage) {
       toast.error(state.errorMessage);
     }
-  }, [state.errorMessage]);
-
-  const handleSubmit = async (formData: FormData) => {
-    const data = {
-      firstname: formData.get("firstname") as string,
-      lastname: formData.get("lastname") as string,
-      email: formData.get("email") as string,
-      pwd: formData.get("pwd") as string,
-    };
-    try {
-      signUpSchema.parse(data);
-      setErrors({});
-      await formAction(formData);
-    } catch (error) {
-      if (error instanceof Error) {
-        let zodError;
-        try {
-          zodError = JSON.parse(error.message);
-        } catch {
-          zodError = error;
-        }
-        const newErrors: { firstname?: string; lastname?: string; email?: string; pwd?: string } = {};
-        if (Array.isArray(zodError)) {
-          zodError.forEach((err: { path: string[]; message: string }) => {
-            if (err.path[0] === "firstname") newErrors.firstname = err.message;
-            if (err.path[0] === "lastname") newErrors.lastname = err.message;
-            if (err.path[0] === "email") newErrors.email = err.message;
-            if (err.path[0] === "pwd") newErrors.pwd = err.message;
-          });
-        }
-        setErrors(newErrors);
-      }
+    if (state?.success && state.email) {
+      toast.success("Sign up successful! Please verify your email.");
+      setUserEmail(state.email);
+      setShowOtp(true);
     }
+    if (state?.errors) {
+        const newErrors: { firstname?: string; lastname?: string; email?: string; pwd?: string } = {};
+        state.errors.forEach((err) => {
+            if (err.path[0] === "firstname") {
+              newErrors.firstname = err.message;
+              setFormData(prev => ({ ...prev, firstname: "" }));
+            }
+            if (err.path[0] === "lastname") {
+              newErrors.lastname = err.message;
+              setFormData(prev => ({ ...prev, lastname: "" }));
+            }
+            if (err.path[0] === "email") {
+              newErrors.email = err.message;
+              setFormData(prev => ({ ...prev, email: "" }));
+            }
+            if (err.path[0] === "pwd") {
+              newErrors.pwd = err.message;
+              setFormData(prev => ({ ...prev, pwd: "" }));
+            }
+        });
+        setErrors(newErrors);
+    } else {
+        setErrors({});
+    }
+  }, [state]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
+
+  if (showOtp) {
+    return <OtpForm email={userEmail} onSuccess={() => router.push("/signin")} />;
+  }
 
   return (
     <form
-      action={handleSubmit}
+      action={formAction}
       className="bg-card m-auto h-fit w-full max-w-sm rounded-[calc(var(--radius)+.125rem)] border p-0.5 shadow-md dark:[--color-muted:var(--color-zinc-900)]"
     >
       <div className="p-8 pb-6">
@@ -95,7 +120,14 @@ export default function SignupForm() {
               <Label htmlFor="firstname" className="block text-sm">
                 Firstname
               </Label>
-              <Input type="text" name="firstname" id="firstname" className={errors.firstname ? "border-red-500" : ""} />
+              <Input 
+                type="text" 
+                name="firstname" 
+                id="firstname"
+                value={formData.firstname}
+                onChange={handleInputChange}
+                className={errors.firstname ? "border-red-500" : ""} 
+              />
               {errors.firstname && (
                 <p className="text-sm text-red-500 mt-1">{errors.firstname}</p>
               )}
@@ -103,8 +135,18 @@ export default function SignupForm() {
             <div className="space-y-2">
               <Label htmlFor="lastname" className="block text-sm">
                 Lastname
+                {formData.lastname === "" && (
+                  <span className="ml-1 text-xs text-muted-foreground">(optional)</span>
+                )}
               </Label>
-              <Input type="text" name="lastname" id="lastname" className={errors.lastname ? "border-red-500" : ""} />
+              <Input 
+                type="text" 
+                name="lastname" 
+                id="lastname"
+                value={formData.lastname}
+                onChange={handleInputChange}
+                className={errors.lastname ? "border-red-500" : ""} 
+              />
               {errors.lastname && (
                 <p className="text-sm text-red-500 mt-1">{errors.lastname}</p>
               )}
@@ -115,7 +157,14 @@ export default function SignupForm() {
             <Label htmlFor="email" className="block text-sm">
               Email
             </Label>
-            <Input type="text" name="email" id="email" className={errors.email ? "border-red-500" : ""} />
+            <Input 
+              type="text" 
+              name="email" 
+              id="email" 
+              value={formData.email}
+              onChange={handleInputChange}
+              className={errors.email ? "border-red-500" : ""} 
+            />
             {errors.email && (
               <p className="text-sm text-red-500 mt-1">{errors.email}</p>
             )}
@@ -125,12 +174,25 @@ export default function SignupForm() {
             <Label htmlFor="pwd" className="text-title text-sm">
               Password
             </Label>
-            <Input
-              type="password"
-              name="pwd"
-              id="pwd"
-              className={`input sz-md variant-mixed ${errors.pwd ? "border-red-500" : ""}`}
-            />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                name="pwd"
+                id="pwd"
+                value={formData.pwd}
+                onChange={handleInputChange}
+                className={`input sz-md variant-mixed ${errors.pwd ? "border-red-500" : ""}`}
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                tabIndex={-1}
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             {errors.pwd && (
               <p className="text-sm text-red-500 mt-1">{errors.pwd}</p>
             )}

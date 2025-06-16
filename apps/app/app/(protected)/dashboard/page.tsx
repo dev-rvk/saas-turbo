@@ -1,12 +1,10 @@
-import { auth } from "@repo/auth/server"
+import { getSession } from "@repo/auth/actions"
 import { headers } from "next/headers"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { NotAuthenticated } from "@/components/not-authenticated"
 
 export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  })
+  const session = await getSession(await headers())
 
   if (!session) {
     return <NotAuthenticated />

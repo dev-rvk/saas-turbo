@@ -8,9 +8,9 @@ export const signUpSchema = z.object({
     .regex(/^[a-zA-Z\s]*$/, "First name can only contain letters and spaces"),
   lastname: z
     .string()
-    .min(2, "Last name must be at least 2 characters")
     .max(50, "Last name must be less than 50 characters")
-    .regex(/^[a-zA-Z\s]*$/, "Last name can only contain letters and spaces"),
+    .regex(/^[a-zA-Z\s]*$/, "Last name can only contain letters and spaces")
+    .optional(),
   email: z
     .string()
     .min(1, "Email is required")
@@ -44,6 +44,13 @@ export const ResetPasswordEmailSchema = z.object({
   resetPasswordLink: z.string().min(2, "Reset password link is required").url("Reset password link must be a valid URL"),
 });
 
+export const VerificationEmailSchema = z.object({
+  toEmail: z.string().email("Invalid email address"),
+  userFirstname: z.string().min(2, "First name is required"),
+  code: z.string().min(6, "Verification code must be 6 characters"),
+});
+
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 export type SignInFormData = z.infer<typeof signInSchema>;
 export type ResetPasswordEmailData = z.infer<typeof ResetPasswordEmailSchema>;
+export type VerificationEmailData = z.infer<typeof VerificationEmailSchema>;

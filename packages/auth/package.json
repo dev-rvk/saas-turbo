@@ -7,16 +7,17 @@
     "dependencies": {
         "better-auth": "^1.2.9",
         "next": "^15.2.3",
-        "react": "^19.0.0"
+        "react": "^19.0.0",
+        "zod": "^3.24.2"
     },
     "devDependencies": {
         "@radix-ui/react-label": "^2.1.7",
         "@repo/db": "workspace:*",
+        "@repo/email": "workspace:*",
         "@repo/eslint-config": "workspace:*",
+        "@repo/types": "workspace:*",
         "@repo/typescript-config": "workspace:*",
         "@repo/ui": "workspace:*",
-        "@repo/email": "workspace:*",
-        "@repo/types": "workspace:*",
         "@types/next": "^9.0.0",
         "@types/node": "22.15.21",
         "@types/react": "19.1.5",
@@ -26,6 +27,7 @@
     },
     "exports": {
         "./client": "./client.ts",
-        "./server": "./server.ts"    
+        "./server": "./server.ts",
+        "./actions": "./actions.ts"
     }
 }

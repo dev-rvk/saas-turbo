@@ -63,10 +63,19 @@ saas-turbo/
 ## Usage Guide
 
 1. **packages/auth**
+   - Exports:
+      - `@repo/auth/client` which is a better auth client exporting `signIn`, `signOut`, `signUp`, `useSession`, `resetPassword`, `forgetPassword`
+      - `@repo/auth/server` which exports `better-auth` instance to be used in the server component.
+      - `@repo/auth/actions` which has augmented functions which check for the users in the database and return either the error message in case the form data is violated. 
+   - Setup the env variables in the respective app directory and then run `pnpm run auth:db:generate` to generate User and Account Schema in your database `@repo/db`, make sure you migrate the database after that.
    - exports  `better-auth/client` and `better-auth/server`
    - `client` exports functions `signIn, signOut, signUp, useSession, resetPassword, forgetPassword`
-   - 
+   - The `apps/app/lib/actions.ts` file exports two functions to signin, signup the user from the FormData.
+   - Reset Password: in `auth/setver.ts`, for email and password login, reset link is sent using the send `sendResetPasswordEmail` defined in the `@repo/email`
 
+
+2. **packages/db**
+   - exprots prisma client as prisma
 
 
 

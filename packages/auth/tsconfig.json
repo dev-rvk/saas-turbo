@@ -6,6 +6,6 @@
       "@repo/auth/*": ["./*"]
     }
   },
-  "include": [".", "../../apps/app/lib/actions.ts"],
+  "include": [".", "actions.ts"],
   "exclude": ["node_modules", "dist"]
 }
