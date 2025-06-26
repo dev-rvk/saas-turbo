@@ -41,7 +41,7 @@ export default function SigninForm() {
       const sendOtp = async () => {
         await authClient.emailOtp.sendVerificationOtp({
             email: state.email!,
-            type: "email-verification",
+            type: "sign-in",
         });
       }
       sendOtp();
@@ -63,7 +63,7 @@ export default function SigninForm() {
   }, [state]);
 
   if (showOtp) {
-    return <OtpForm email={userEmail} onSuccess={() => window.location.reload()} />;
+    return <OtpForm email={userEmail} onSuccess={() => router.push("/dashboard")} />;
   }
 
   return (

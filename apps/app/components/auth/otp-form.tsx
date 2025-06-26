@@ -38,7 +38,7 @@ export default function OtpForm({ email, onSuccess }: OtpFormProps) {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await authClient.emailOtp.verifyEmail({
+    const { error } = await authClient.signIn.emailOtp({
       email,
       otp,
     });
@@ -56,7 +56,7 @@ export default function OtpForm({ email, onSuccess }: OtpFormProps) {
     setLoading(true);
     const { error } = await authClient.emailOtp.sendVerificationOtp({
       email,
-      type: "email-verification",
+      type: "sign-in",
     });
 
     if (error) {

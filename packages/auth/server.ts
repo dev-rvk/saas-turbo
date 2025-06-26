@@ -16,7 +16,7 @@ export const auth = betterAuth({
         otpLength: 6,
         expiresIn: 300, // 5 minutes
         allowedAttempts: 3,
-        sendVerificationOnSignUp: true,
+        sendVerificationOnSignUp: false,
         disableSignUp: true,
         async sendVerificationOTP({ email, otp, type}) {
           console.log(`[Auth] Attempting to send OTP. Email: ${email}, Type: ${type}`);

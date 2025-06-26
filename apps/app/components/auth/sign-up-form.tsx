@@ -13,6 +13,7 @@ import SignInSocial from "./sign-in-social";
 import OtpForm from "./otp-form";
 import type { ZodIssue } from "zod";
 import { Eye, EyeOff } from "lucide-react";
+import { authClient } from "@repo/auth/client";
 
 type State = {
   errorMessage?: string | null;
@@ -43,8 +44,19 @@ export default function SignupForm() {
     }
     if (state?.success && state.email) {
       toast.success("Sign up successful! Please verify your email.");
-      setUserEmail(state.email);
-      setShowOtp(true);
+      const sendOtp = async () => {
+        try {
+          await authClient.emailOtp.sendVerificationOtp({
+            email: state.email as string,
+            type: "sign-in",
+          });
+          setUserEmail(state.email as string);
+          setShowOtp(true);
+        } catch (error) {
+          toast.error("Failed to send verification email. Please try again.");
+        }
+      };
+      sendOtp();
     }
     if (state?.errors) {
         const newErrors: { firstname?: string; lastname?: string; email?: string; pwd?: string } = {};
@@ -78,7 +90,7 @@ export default function SignupForm() {
   };
 
   if (showOtp) {
-    return <OtpForm email={userEmail} onSuccess={() => router.push("/signin")} />;
+    return <OtpForm email={userEmail} onSuccess={() => router.push("/dashboard")} />;
   }
 
   return (
